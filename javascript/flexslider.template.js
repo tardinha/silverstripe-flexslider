@@ -10,7 +10,9 @@
             slideshowSpeed: "$settings_slideshowSpeed",     
             animationSpeed: "$settings_animationSpeed",     
             randomize:       $settings_randomize,                 
-            controlNav:      $settings_showControlNav            
+            controlNav:      $settings_showControlNav,
+            directionNav:    $settings_showDirectionlNav,
+            pausePlay:       $settings_showPausePlay
             //before: FLXslideBeforeHandler
         });
     });

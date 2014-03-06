@@ -118,7 +118,7 @@ class FlexSlide extends DataObject {
     public function flexCroppedImage($imageWidth,$imageHeight) {
         $Picture = $this->Picture();
         if (!$Picture->exists()) return false;
-        return $Picture->croppedImage($imageWidth,$imageHeight);
+        return $Picture->CroppedFocusedImage($imageWidth,$imageHeight);
     }
     
     /**

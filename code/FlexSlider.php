@@ -19,18 +19,20 @@ class FlexSlider extends DataObject {
      */
     protected $extraClasses;
     
-    public static $db = array('Title'           => 'Varchar',
-                              'animation'       => 'Enum("slide,fade","slide")',
-                              'easing'          => 'Enum("linear,swing,easeInQuad,easeOutQuad,easeOutExpo","linear")',
-                              'direction'       => 'Enum("horizontal,vertical","horizontal")',
-                              'reverse'         => 'Boolean',
-                              'dynamicLoading'  => 'Boolean',
-                              'animationLoop'   => 'Boolean',
-                              'slideshow'       => 'Boolean',
-                              'slideshowSpeed'  => 'Int(7000)',
-                              'animationSpeed'  => 'Int(600)',
-                              'randomize'       => 'Boolean',
-                              'showControlNav'  => 'Boolean'
+    public static $db = array('Title'               => 'Varchar',
+                              'animation'           => 'Enum("slide,fade","slide")',
+                              'easing'              => 'Enum("linear,swing,easeInQuad,easeOutQuad,easeOutExpo","linear")',
+                              'direction'           => 'Enum("horizontal,vertical","horizontal")',
+                              'reverse'             => 'Boolean',
+                              'dynamicLoading'      => 'Boolean',
+                              'animationLoop'       => 'Boolean',
+                              'slideshow'           => 'Boolean',
+                              'slideshowSpeed'      => 'Int(7000)',
+                              'animationSpeed'      => 'Int(600)',
+                              'randomize'           => 'Boolean',
+                              'showControlNav'      => 'Boolean',
+                              'showDirectionlNav'   => 'Boolean',
+                              'showPausePlay'       => 'Boolean'
                               ); 
     
     public static $has_many = array('FlexSlides' => 'FlexSlide');
@@ -53,10 +55,12 @@ class FlexSlider extends DataObject {
         $this->animationSpeed = 600;
         $this->randomize = 0;
         $this->showControlNav = 1;
+        $this->showControlNav = 0;
+        $this->showPausePlay = 0;
     }
     
     // column names of grid (translated to the current admin language)
-    static $field_labels = array('NoSlides'        => 'Number of Slides');
+    static $field_labels = array('NoSlides' => 'Number of Slides');
     
     // columns in Grid
     static $summary_fields = array(
@@ -81,31 +85,35 @@ class FlexSlider extends DataObject {
         $fields->removeByName("animationSpeed");
         $fields->removeByName("randomize");
         $fields->removeByName("showControlNav");
+        $fields->removeByName("showDirectionlNav");
+        $fields->removeByName("showPausePlay");
         
         $animationTypes = $this->dbObject("animation")->enumValues();
         $easingTypes = $this->dbObject("easing")->enumValues();
         $directions = $this->dbObject("direction")->enumValues();
         
         // Main
-        $field_Title            = new TextField("Title", _t("FlexSlider.Title"));
+        $field_Title                = new TextField("Title", _t("FlexSlider.Title"));
         $field_Title->setRightTitle(_t("FlexSlider.TitleDescription")); 
-        $field_slideshow        = new CheckboxField("slideshow", _t("FlexSlider.slideshow"));
-        $field_animationLoop    = new CheckboxField("animationLoop", _t("FlexSlider.animationLoop"));
-        $field_animation        = new Dropdownfield("animation", _t("FlexSlider.animationType"), $animationTypes);
-        $field_direction        = new Dropdownfield("direction", _t("FlexSlider.direction"), $directions);
-        $field_easing           = new Dropdownfield("easing", _t("FlexSlider.easingType"), $easingTypes);
+        $field_slideshow            = new CheckboxField("slideshow", _t("FlexSlider.slideshow"));
+        $field_animationLoop        = new CheckboxField("animationLoop", _t("FlexSlider.animationLoop"));
+        $field_animation            = new Dropdownfield("animation", _t("FlexSlider.animationType"), $animationTypes);
+        $field_direction            = new Dropdownfield("direction", _t("FlexSlider.direction"), $directions);
+        $field_easing               = new Dropdownfield("easing", _t("FlexSlider.easingType"), $easingTypes);
         $field_easing->setRightTitle(_t("FlexSlider.easingTypeDescription")); 
         
-        $field_slideshowSpeedvalue = (!$this->ID) ? FlexSlider::$defaults["slideshowSpeed"] : $this->slideshowSpeed;
-        $field_slideshowSpeed   = new NumericField("slideshowSpeed", _t("FlexSlider.slideshowSpeed"),$field_slideshowSpeedvalue);
+        $field_slideshowSpeedvalue  = (!$this->ID) ? FlexSlider::$defaults["slideshowSpeed"] : $this->slideshowSpeed;
+        $field_slideshowSpeed       = new NumericField("slideshowSpeed", _t("FlexSlider.slideshowSpeed"),$field_slideshowSpeedvalue);
         $field_slideshowSpeed->setRightTitle(_t("FlexSlider.slideshowSpeedDescription")); 
         
-        $field_animationSpeedvalue = (!$this->ID) ? FlexSlider::$defaults["animationSpeed"] : $this->animationSpeed;
-        $field_animationSpeed   = new NumericField("animationSpeed", _t("FlexSlider.animationSpeed"), $field_animationSpeedvalue);
+        $field_animationSpeedvalue  = (!$this->ID) ? FlexSlider::$defaults["animationSpeed"] : $this->animationSpeed;
+        $field_animationSpeed       = new NumericField("animationSpeed", _t("FlexSlider.animationSpeed"), $field_animationSpeedvalue);
         $field_animationSpeed->setRightTitle(_t("FlexSlider.animationSpeedDescription")); 
         
-        $field_randomize        = new CheckboxField("randomize", _t("FlexSlider.randomize"));
-        $field_showControlNav   = new CheckboxField("showControlNav", _t("FlexSlider.showControlNav"));
+        $field_randomize            = new CheckboxField("randomize", _t("FlexSlider.randomize"));
+        $field_showControlNav       = new CheckboxField("showControlNav", _t("FlexSlider.showControlNav"));
+        $field_showDirectionlNav    = new CheckboxField("showDirectionlNav", _t("FlexSlider.showDirectionlNav"));
+        $field_showPausePlay        = new CheckboxField("showPausePlay", _t("FlexSlider.showPausePlay"));
         
         $FieldsArray = array(
             $field_Title,
@@ -117,7 +125,9 @@ class FlexSlider extends DataObject {
             $field_slideshowSpeed,
             $field_animationSpeed,
             $field_randomize,
-            $field_showControlNav
+            $field_showControlNav,
+            $field_showDirectionlNav,
+            $field_showPausePlay
         );
         
         $fields->addFieldsToTab('Root.Main', $FieldsArray);
@@ -212,7 +222,9 @@ class FlexSlider extends DataObject {
                                    "settings_slideshowSpeed"    => $this->slideshowSpeed,
                                    "settings_animationSpeed"    => $this->animationSpeed,
                                    "settings_randomize"         => $this->randomize,
-                                   "settings_showControlNav"    => $this->showControlNav
+                                   "settings_showControlNav"    => $this->showControlNav,
+                                   "settings_showDirectionlNav" => $this->showDirectionlNav,
+                                   "settings_showPausePlay"     => $this->showPausePlay
                                    );
                                    
         // load all needed Javascript
@@ -222,9 +234,9 @@ class FlexSlider extends DataObject {
         Requirements::javascriptTemplate('flexslider/javascript/flexslider.template.js', $flexslider_config);
         
         // load css
-        Requirements::css('flexslider/thirdparty/FlexSlider/flexslider.css');   // original css of flexslider
-        Requirements::css('flexslider/css/flexslider.css');                     // additional css for ss flexslider module
-        Requirements::css($this->ThemeDir().'/css/flexslider.css');             // look for a custom flexslider.css in the projects themes folder
+        // Requirements::css('flexslider/thirdparty/FlexSlider/flexslider.css');   // original css of flexslider
+        // Requirements::css('flexslider/css/flexslider.css');                     // additional css for ss flexslider module
+        // Requirements::css($this->ThemeDir().'/css/flexslider.css');             // look for a custom flexslider.css in the projects themes folder
         
         
         return $this->renderWith('FlexSlider');

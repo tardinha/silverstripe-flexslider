@@ -26,3 +26,5 @@ en:
     animationSpeedDescription: "A value of 2000 means, that it takes 2 seconds to fade/slide to the next slide."
     randomize: "Random order"
     showControlNav: "Show paging"
+    showDirectionlNav: "Show prev/next"
+    showPausePlay: "Show play/pause"
